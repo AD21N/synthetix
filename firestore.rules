@@ -1,0 +1,43 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Primitives
+    function isValidId(id) { 
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); 
+    }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isSignedIn() { return request.auth != null && request.auth.token.email_verified == true; }
+
+    // Blueprints
+    function isValidReview(data) {
+      return data.keys().hasOnly(['userId', 'code', 'bugs', 'performanceScore', 'styleSuggestions', 'refactoredCode', 'createdAt']) &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.userId == request.auth.uid &&
+             data.code is string && data.code.size() <= 600000 &&
+             data.performanceScore is number &&
+             data.bugs is list && data.bugs.size() <= 1000 &&
+             (!('styleSuggestions' in data) || data.styleSuggestions is list) &&
+             (!('refactoredCode' in data) || data.refactoredCode is string) &&
+             data.createdAt == request.time;
+    }
+
+    match /reviews/{reviewId} {
+      allow get: if isSignedIn() && isValidId(reviewId) && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      
+      allow create: if isSignedIn() && 
+                    isValidId(reviewId) && 
+                    isValidReview(incoming()) && 
+                    incoming().keys().hasAll(['userId', 'code', 'createdAt']);
+                    
+      // Updates and deletes not currently needed, fallback to global deny
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "entities": {
+    "Review": {
+      "title": "Review",
+      "description": "A saved AI code review.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner's Google User ID"
+        },
+        "code": {
+          "type": "string"
+        },
+        "bugs": {
+          "type": "array"
+        },
+        "performanceScore": {
+          "type": "number"
+        },
+        "createdAt": {
+          "type": "timestamp"
+        }
+      },
+      "required": [
+        "userId",
+        "code",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/reviews/{reviewId}": {
+      "schema": {
+        "$ref": "#/entities/Review"
+      },
+      "description": "Stores user-saved code reviews."
+    }
+  }
+}
