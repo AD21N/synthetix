@@ -23,6 +23,7 @@
     "prismjs": "^1.30.0",
     "prop-types": "^15.8.1",
     "react": "^19.0.1",
+    "react-diff-viewer-continued": "^4.2.2",
     "react-diff-viewer-next": "^0.1.0-alpha",
     "react-dom": "^19.0.1",
     "react-simple-code-editor": "^0.14.1",

@@ -1,4 +1,4 @@
-import ReactDiffViewer from 'react-diff-viewer-next';
+import ReactDiffViewer from 'react-diff-viewer-continued';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
